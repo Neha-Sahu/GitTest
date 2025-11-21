@@ -1,24 +1,26 @@
 pipeline {
     agent any
     tools {
-        nodejs 'Node20'   // ← must match the name you gave in Global Tool Configuration
+        nodejs 'Node20'
     }
     stages {
-        stage('Install Dependencies') {
+        stage('Install') {
             steps {
-                bat 'npm ci'   // clean install – fastest & reliable
+                bat 'npm ci'
             }
         }
         stage('Run Cypress Tests') {
             steps {
-                bat 'npx cypress run --headless --browser chrome'
-                // or just: bat 'npx cypress run'  (it will auto-pick chrome/edge)
+                bat 'npm run test'  // This now generates results.xml
             }
         }
     }
     post {
         always {
-            // Save videos & screenshots even if tests fail
+            // Shows test results (pass/fail count) in Jenkins
+            junit 'cypress/results/results.xml'
+
+            // Save videos and screenshots
             archiveArtifacts artifacts: 'cypress/videos/**/*.mp4', allowEmptyArchive: true
             archiveArtifacts artifacts: 'cypress/screenshots/**/*.png', allowEmptyArchive: true
         }
