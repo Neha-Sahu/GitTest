@@ -15,3 +15,17 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
+// cypress/support/e2e.js   ← this file runs before every test
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // Amazon throws tons of " Things went bad" or null errors from 3rd party scripts
+  if (err.message.includes('Things went bad') || 
+      err.message.includes('null') || 
+      err.message.includes('Script error') ||
+      err.message.includes('ResizeObserver') ||
+      err.message.includes('Minified') ) {
+    // we expected this error, so let's ignore it
+    return false
+  }
+  // Let other real errors fail the test
+})

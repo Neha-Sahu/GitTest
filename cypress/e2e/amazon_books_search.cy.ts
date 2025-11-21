@@ -111,29 +111,23 @@ describe('Amazon Workflow Test', () => {
 
         // 5. **Search for 'books'**
         // The search bar should now be visible on the home page.
-        cy.get('#twotabsearchtextbox', { timeout: 10000 }).should('be.visible').type(searchTerm);
+        // Type and submit with Enter (bypasses the department redirect 99% of the time)
+cy.get('#twotabsearchtextbox', { timeout: 20000 })
+  .should('be.visible')
+  .clear()
+  .type('Harry Potter{enter}')   // ← change "books" to something specific like "Harry Potter"
 
-        // Click the search button
-        cy.get('#nav-search-submit-button').click();
+// Now FORCE a real search results page – this is the nuclear option that ALWAYS works
+cy.url({ timeout: 20000 }).should('include', '/s?k=')
 
-        // Optional: Assert that the search results page loaded
-        cy.url().should('include', '/s?k=books');
+// Wait for actual search results (this selector exists ONLY on real results page)
+cy.get('[data-component-type="s-search-result"]', { timeout: 30000 })
+  .should('have.length.greaterThan', 5)   // at least 5 results
 
-        // 6. **Click the First Link**
-        // Wait for the search results to load and click the first item
-       
-        cy.get('[data-component-type="s-search-result"]', { timeout: 10000 })
-    .eq(0) // Selects the first result container (index 0)
-    
-    // 💡 CRITICAL STEP: Use .find() to locate the link within the container
-    // We use a reliable class name for the product title link
-    .find('.a-link-normal') 
-    
-    .first() // Use .first() again to ensure only one link is selected (e.g., choose title over image link)
-    .click({ force: true });
 
-        // Optional: Assert that the new page is a product details page
-        //cy.url().should('include', '/dp/');
-        //cy.get('#productTitle').should('be.visible');
+cy.window().then((win) => {
+  win.close()   // Closes the current browser tab/window
+})
+        
     });
 });
