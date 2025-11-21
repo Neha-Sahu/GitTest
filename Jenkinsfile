@@ -15,14 +15,14 @@ pipeline {
             }
         }
     }
-        post {
+            post {
         always {
-            // THIS LINE ADDS THE TEST RESULT TAB
-            junit testResults: 'cypress/results/*.xml', allowEmptyResults: true
-
-            // Keeps your videos and screenshots
+            junit 'cypress/results/results.xml'   // exact name, no *
+            
             archiveArtifacts artifacts: 'cypress/videos/**/*.mp4', allowEmptyArchive: true
             archiveArtifacts artifacts: 'cypress/screenshots/**/*.png', allowEmptyArchive: true
+        }
+    }
         }
     }
         }
