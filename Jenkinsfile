@@ -15,14 +15,16 @@ pipeline {
             }
         }
     }
-    post {
+        post {
         always {
-            // Shows test results (pass/fail count) in Jenkins
-            junit 'cypress/results/results.xml'
+            // THIS LINE ADDS THE TEST RESULT TAB
+            junit testResults: 'cypress/results/*.xml', allowEmptyResults: true
 
-            // Save videos and screenshots
+            // Keeps your videos and screenshots
             archiveArtifacts artifacts: 'cypress/videos/**/*.mp4', allowEmptyArchive: true
             archiveArtifacts artifacts: 'cypress/screenshots/**/*.png', allowEmptyArchive: true
+        }
+    }
         }
     }
 }
