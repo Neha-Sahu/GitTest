@@ -1,0 +1,42 @@
+# .github/workflows/cypress.yml
+name: Cypress Tests
+
+on:
+  push:
+    branches: [ cpbranch ]
+  pull_request:
+    branches: [ cpbranch ]
+
+jobs:
+  cypress:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress tests
+        run: npx cypress run
+        continue-on-error: false   # fails the job if any test fails
+
+      - name: Upload videos (only on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos/**/*.mp4
+
+      - name: Upload screenshots (only on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/**/*.png
