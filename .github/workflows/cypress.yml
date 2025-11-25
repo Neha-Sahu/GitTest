@@ -7,10 +7,10 @@ on:
     branches: [ cpbranch ]
 
 jobs:
-  cypress-run:
+  cypress:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -25,12 +25,13 @@ jobs:
       - name: Run Cypress tests
         run: npx cypress run
 
-      - name: Upload test artifacts
+      # This makes screenshots & videos downloadable even when tests PASS
+      - name: Upload screenshots & videos (always)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-artifacts
+          name: cypress-screenshots-and-videos
           path: |
-            cypress/videos
-            cypress/screenshots
-            cypress/results
+            cypress/screenshots/**/*.png
+            cypress/videos/**/*.mp4
+          retention-days: 30   # keeps them for 30 days
